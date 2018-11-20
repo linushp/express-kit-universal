@@ -120,12 +120,12 @@ function extend_component(componentObject, xxxObj) {
 }
 
 
-function set_window(windowObj) {
+function set_ssr_window(windowObj) {
     __$windowObj = windowObj;
 }
 
 module.exports = {
-    set_window: set_window,
+    set_ssr_window: set_ssr_window,
     get_component: get_component,
     extend_component: extend_component,
     register_component: register_component,
