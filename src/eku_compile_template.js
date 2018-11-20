@@ -38,7 +38,7 @@ var eku_compile_template = (function(){
         }
 
         var code = vars + codeArr[0] + tmpCode + 'return ' + codeArr[3];
-        return new Function('$data', code);
+        return new Function('$data','window', code);
     }
 
     function _html(s) {
@@ -82,10 +82,11 @@ var eku_compile_template = (function(){
     }
 
 
-    return function (str, data) {
+    return function (str, data,windowObj) {
         var fn =  _getCompileFn(str);
-        return data ? fn(data) : fn;
+        return data ? fn(data,windowObj) : fn;
     };
+
 })();
 
 

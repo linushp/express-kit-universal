@@ -1,5 +1,6 @@
 var eku_compile_template = require("./eku_compile_template");
 
+var __$windowObj = null;
 
 function isObject(x) {
     return Object.prototype.toString.call(x) === "[object Object]";
@@ -38,9 +39,10 @@ var register_component_container = {};
 function register_component(componentName, componentDefine) {
     componentDefine["$render"] = function (tpl, data) {
         data = data || {};
+        var windowObj = __$windowObj;
         handle_base_component(data, componentDefine.base_component_name);
         extend_object(data, componentDefine);
-        return eku_compile_template(tpl)(data)
+        return eku_compile_template(tpl)(data,windowObj);
     };
     register_component_container[componentName] = componentDefine;
     return componentDefine;
@@ -111,12 +113,17 @@ function get_component(componentName, html2js_tpl) {
 }
 
 
-function extend_component(componentObject,extendObject) {
-    extendObject(componentObject,extendObject);
+function extend_component(componentObject,xxxObj) {
+    extend_object(componentObject,xxxObj);
 }
 
 
+function set_window(windowObj) {
+    __$windowObj = windowObj;
+}
+
 module.exports = {
+    set_window:set_window,
     get_component: get_component,
     extend_component: extend_component,
     register_component: register_component,
