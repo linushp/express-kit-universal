@@ -217,11 +217,12 @@ function register_component(componentName, componentDefine) {
 function register_component_by_template(componentName, html2js_tpl) {
     var componentDefine = {};
 
-    var xxxxx = componentName + "----";
+    var templateKeyBegin = componentName + "----";
+
     for (var templateKey in html2js_tpl) {
-        if (html2js_tpl.hasOwnProperty(templateKey) && templateKey.indexOf(xxxxx) === 0) {
-            var aaaaa = html2js_tpl[templateKey];
-            var foo_name = aaaaa.foo_name;
+        if (html2js_tpl.hasOwnProperty(templateKey) && templateKey.indexOf(templateKeyBegin) === 0) {
+            var templateDefine = html2js_tpl[templateKey];
+            var foo_name = templateDefine.foo_name;
 
             /**
              * <string2-template foo="render" params="name,sex">
@@ -233,6 +234,7 @@ function register_component_by_template(componentName, html2js_tpl) {
 
                 var params = (propsMap['params'] || "").trim();
                 var params_array = params.split(",");
+
                 return function () {
                     var args = Array.prototype.slice.apply(arguments);
                     var data = {};
@@ -245,7 +247,7 @@ function register_component_by_template(componentName, html2js_tpl) {
                     }
                     return this.$render(tpl, data);
                 };
-            })(aaaaa);
+            })(templateDefine);
         }
     }
 
@@ -268,8 +270,13 @@ function get_component(componentName, html2js_tpl) {
     }
 }
 
+function extend_component(componentObject, extendObject) {
+    extendObject(componentObject, extendObject);
+}
+
 module.exports = {
     get_component: get_component,
+    extend_component: extend_component,
     register_component: register_component,
     register_component_by_template: register_component_by_template
 };
