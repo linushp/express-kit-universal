@@ -116,7 +116,7 @@ var eku_compile_template = (function () {
         }
 
         var code = vars + codeArr[0] + tmpCode + 'return ' + codeArr[3];
-        return new Function('$data', code);
+        return new Function('$data', 'window', code);
     }
 
     function _html(s) {
@@ -156,9 +156,9 @@ var eku_compile_template = (function () {
         }
     }
 
-    return function (str, data) {
+    return function (str, data, windowObj) {
         var fn = _getCompileFn(str);
-        return data ? fn(data) : fn;
+        return data ? fn(data, windowObj) : fn;
     };
 })();
 
@@ -172,6 +172,8 @@ module.exports = eku_compile_template;
 
 
 var eku_compile_template = __webpack_require__(0);
+
+var __$windowObj = null;
 
 function isObject(x) {
     return Object.prototype.toString.call(x) === "[object Object]";
@@ -204,11 +206,16 @@ function handle_base_component(obj, base_component) {
 var register_component_container = {};
 
 function register_component(componentName, componentDefine) {
-    componentDefine["$render"] = function (tpl, data) {
+    componentDefine["$render"] = function (tpl_or_compiled, data) {
         data = data || {};
+        var windowObj = __$windowObj;
         handle_base_component(data, componentDefine.base_component_name);
         extend_object(data, componentDefine);
-        return eku_compile_template(tpl)(data);
+
+        if (isFunction(tpl_or_compiled)) {
+            return tpl_or_compiled(data, windowObj);
+        }
+        return eku_compile_template(tpl_or_compiled)(data, windowObj);
     };
     register_component_container[componentName] = componentDefine;
     return componentDefine;
@@ -228,8 +235,9 @@ function register_component_by_template(componentName, html2js_tpl) {
              * <string2-template foo="render" params="name,sex">
              */
             componentDefine[foo_name] = (function (aaaaa) {
+                var tpl = aaaaa.content || "";
+                var tpl_compiled = eku_compile_template(tpl);
 
-                var tpl = aaaaa.content;
                 var propsMap = aaaaa.propsMap || {};
 
                 var params = (propsMap['params'] || "").trim();
@@ -245,7 +253,7 @@ function register_component_by_template(componentName, html2js_tpl) {
                             data[param_name] = args[i];
                         }
                     }
-                    return this.$render(tpl, data);
+                    return this.$render(tpl_compiled, data);
                 };
             })(templateDefine);
         }
@@ -270,11 +278,16 @@ function get_component(componentName, html2js_tpl) {
     }
 }
 
-function extend_component(componentObject, extendObject) {
-    extendObject(componentObject, extendObject);
+function extend_component(componentObject, xxxObj) {
+    extend_object(componentObject, xxxObj);
+}
+
+function set_window(windowObj) {
+    __$windowObj = windowObj;
 }
 
 module.exports = {
+    set_window: set_window,
     get_component: get_component,
     extend_component: extend_component,
     register_component: register_component,
