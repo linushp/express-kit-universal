@@ -7,7 +7,7 @@
     "build:umd:min": "cross-env NODE_ENV=production webpack src/eku_component.js dist/ExpressKitUniversal.min.js",
     "build": "npm run build:umd && npm run build:umd:min"
   },
-  "main": "dist/ExpressKitUniversal.js",
+  "main": "src/eku_component.js",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/linushp/express-kit-universal.git"
