@@ -1,6 +1,6 @@
 var eku_compile_template = require("./eku_compile_template");
 
-var __$windowObj = null;
+var __$windowObj = {};
 
 function isObject(x) {
     return Object.prototype.toString.call(x) === "[object Object]";
@@ -124,8 +124,19 @@ function set_ssr_window(windowObj) {
     __$windowObj = windowObj;
 }
 
+function get_ssr_window() {
+    return __$windowObj;
+}
+
+function extend_ssr_window(windowObj) {
+    extend_object(__$windowObj,windowObj);
+}
+
+
 module.exports = {
     set_ssr_window: set_ssr_window,
+    get_ssr_window: get_ssr_window,
+    extend_ssr_window:extend_ssr_window,
     get_component: get_component,
     extend_component: extend_component,
     register_component: register_component,

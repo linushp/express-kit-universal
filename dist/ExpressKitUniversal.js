@@ -173,7 +173,7 @@ module.exports = eku_compile_template;
 
 var eku_compile_template = __webpack_require__(0);
 
-var __$windowObj = null;
+var __$windowObj = {};
 
 function isObject(x) {
     return Object.prototype.toString.call(x) === "[object Object]";
@@ -282,12 +282,22 @@ function extend_component(componentObject, xxxObj) {
     extend_object(componentObject, xxxObj);
 }
 
-function set_window(windowObj) {
+function set_ssr_window(windowObj) {
     __$windowObj = windowObj;
 }
 
+function get_ssr_window() {
+    return __$windowObj;
+}
+
+function extend_ssr_window(windowObj) {
+    extend_object(__$windowObj, windowObj);
+}
+
 module.exports = {
-    set_window: set_window,
+    set_ssr_window: set_ssr_window,
+    get_ssr_window: get_ssr_window,
+    extend_ssr_window: extend_ssr_window,
     get_component: get_component,
     extend_component: extend_component,
     register_component: register_component,
