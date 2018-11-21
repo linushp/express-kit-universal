@@ -116,6 +116,9 @@ var eku_compile_template = (function () {
         }
 
         var code = vars + codeArr[0] + tmpCode + 'return ' + codeArr[3];
+
+        code = "try{" + code + " }catch(e){ console.log(e); return e;}";
+
         return new Function('$data', 'window', code);
     }
 
