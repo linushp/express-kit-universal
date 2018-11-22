@@ -276,16 +276,21 @@ function register_component_by_template(componentName, html2js_tpl) {
                 var params = (propsMap['params'] || "").trim();
                 var params_array = params.split(",");
 
-                return function () {
-                    var args = Array.prototype.slice.apply(arguments);
+                return function (dd) {
                     var data = {};
-                    for (var i = 0; i < params_array.length; i++) {
-                        var param_name = params_array[i];
-                        if (param_name && param_name.trim().length > 0) {
-                            param_name = param_name.trim();
-                            data[param_name] = args[i];
+                    if (params_array.length > 0) {
+                        var args = Array.prototype.slice.apply(arguments);
+                        for (var i = 0; i < params_array.length; i++) {
+                            var param_name = params_array[i];
+                            if (param_name && param_name.trim().length > 0) {
+                                param_name = param_name.trim();
+                                data[param_name] = args[i];
+                            }
                         }
+                    } else if (isObject(dd)) {
+                        data = dd;
                     }
+
                     return this.$render(tpl_compiled, data);
                 };
             })(templateDefine);

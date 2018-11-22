@@ -1,6 +1,6 @@
 {
   "name": "express-kit-universal",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "JavaScript Function Utils",
   "scripts": {
     "build:umd": "cross-env NODE_ENV=development webpack src/eku_component.js dist/ExpressKitUniversal.js",
