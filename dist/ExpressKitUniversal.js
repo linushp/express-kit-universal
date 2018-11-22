@@ -223,7 +223,7 @@ function handle_base_component(obj, base_component) {
  */
 function register_component(componentName, componentDefine) {
 
-    if (isObject(componentDefine)) {
+    if (isObject(componentDefine) && componentDefine.type === "eku_render_component") {
 
         componentDefine["$render"] = function (tpl_or_compiled, data) {
             data = data || {};
@@ -244,7 +244,11 @@ function register_component(componentName, componentDefine) {
 }
 
 function register_component_by_template(componentName, html2js_tpl) {
-    var componentDefine = {};
+
+    var componentDefine = {
+        type: "eku_render_component"
+    };
+
     var componentDefineAttrCount = 0;
 
     var templateKeyBegin = componentName + "----";
