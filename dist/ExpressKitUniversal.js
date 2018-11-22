@@ -223,7 +223,7 @@ function handle_base_component(obj, base_component) {
  */
 function register_component(componentName, componentDefine) {
 
-    if (isObject(componentDefine) && componentDefine.type === "eku_render_component") {
+    if (isObject(componentDefine) && componentDefine.eku_type === "eku_render_component") {
 
         componentDefine["$render"] = function (tpl_or_compiled, data) {
             data = data || {};
@@ -246,7 +246,7 @@ function register_component(componentName, componentDefine) {
 function register_component_by_template(componentName, html2js_tpl) {
 
     var componentDefine = {
-        type: "eku_render_component"
+        eku_type: "eku_render_component"
     };
 
     var componentDefineAttrCount = 0;
@@ -354,10 +354,15 @@ function set_html2js_tpl(xxx) {
     __REGISTER_COMPONENT_CONTAINER__[__HTML2JS_TPL__] = xxx;
 }
 
+function clear_all_components() {
+    __REGISTER_COMPONENT_CONTAINER__ = {};
+}
+
 module.exports = {
     set_html2js_tpl: set_html2js_tpl,
     get_component: get_component,
     get_all_components: get_all_components,
+    clear_all_components: clear_all_components,
     extend_component: extend_component,
     register_component: register_component,
     register_components: register_components,

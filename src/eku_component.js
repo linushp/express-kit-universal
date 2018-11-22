@@ -197,10 +197,16 @@ function set_html2js_tpl(xxx) {
     __REGISTER_COMPONENT_CONTAINER__[__HTML2JS_TPL__] = xxx;
 }
 
+function clear_all_components() {
+    __REGISTER_COMPONENT_CONTAINER__ = {};
+}
+
+
 module.exports = {
     set_html2js_tpl: set_html2js_tpl,
     get_component: get_component,
     get_all_components: get_all_components,
+    clear_all_components: clear_all_components,
     extend_component: extend_component,
     register_component: register_component,
     register_components: register_components,
