@@ -1,6 +1,7 @@
 'use strict';
 
 var webpack = require('webpack');
+var package_json = require("./package");
 var env = process.env.NODE_ENV;
 
 
@@ -28,7 +29,9 @@ var config = {
         },
         new webpack.DefinePlugin({
             'process.env.NODE_ENV': JSON.stringify(env)
-        })
+        }),
+        new webpack.BannerPlugin("ExpressKitUniversal , version " + package_json.version + ", build time : " + new Date().toLocaleDateString() + " " + new Date().toLocaleTimeString())
+
     ]
 };
 

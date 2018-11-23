@@ -18,7 +18,24 @@ function isString(x) {
 }
 
 
-function extend_object(objA, objB) {
+function removeEmptyElement(obj_list) {
+    if (obj_list) {
+        var result = [];
+        for (var i = 0; i < obj_list.length; i++) {
+            var obj = (obj_list[i] || "").trim();
+            if (obj && obj.length > 0) {
+                result.push(obj);
+            }
+        }
+
+        return result;
+
+    }
+    return [];
+}
+
+
+function extend_object_one(objA, objB) {
     for (var key in objB) {
         if (objB.hasOwnProperty(key)) {
             var valB = objB[key];
@@ -29,20 +46,50 @@ function extend_object(objA, objB) {
 }
 
 
+function extend_object(objA, objB, objC,objD) {
+    if(objB){
+        extend_object_one(objA,objB);
+    }
+    if(objC){
+        extend_object_one(objA,objC);
+    }
+    if(objD){
+        extend_object_one(objA,objD);
+    }
+    return objA;
+}
+
+
 /**
  *
- * @param obj
- * @param base_component 字符串
+ * @param target_compoent_define
+ * @param base_component_str 字符串
  */
-function handle_base_component(obj, base_component) {
-    if (base_component && base_component.length > 0) {
-        var base_component_define = get_component(base_component);
+function bind_base_component_attrs(target_compoent_define, base_component_str) {
+    if (base_component_str && base_component_str.length > 0) {
+        var base_component_define = get_component(base_component_str);
         if (base_component_define) {
-            handle_base_component(obj, base_component_define.base_component);
-            extend_object(obj, base_component_define);
+            _base_component(target_compoent_define, base_component_define.base_component);
+            extend_object(target_compoent_define, base_component_define);
         }
     }
 }
+
+
+function bind_function_context(obj_functions) {
+
+    for (var comp_key in obj_functions) {
+        if (obj_functions.hasOwnProperty(comp_key)) {
+            var comp_value = obj_functions[comp_key];
+            if (isFunction(comp_value)) {
+                obj_functions[comp_key] = comp_value.bind(obj_functions);
+            }
+        }
+    }
+
+    return obj_functions;
+}
+
 
 
 /**
@@ -54,20 +101,30 @@ function register_component(componentName, componentDefine) {
 
     if (isObject(componentDefine) && (componentDefine.eku_type === "eku_render_component")) {
 
+
         componentDefine["$render"] = function (tpl_or_compiled, data) {
-            data = data || {};
+
+            var that = this;
             var windowObj = __REGISTER_COMPONENT_CONTAINER__;
-            handle_base_component(data, componentDefine.base_component);
-            extend_object(data, componentDefine);
+
+            var renderData = extend_object({}, that, data);
 
             if (isFunction(tpl_or_compiled)) {
-                return tpl_or_compiled(data, windowObj);
+                return tpl_or_compiled(renderData, windowObj);
             }
 
-            return eku_compile_template(tpl_or_compiled)(data, windowObj);
+            return eku_compile_template(tpl_or_compiled)(renderData, windowObj);
         };
 
+
+        //将继承的组件的属性
+        bind_base_component_attrs(componentDefine, componentDefine.base_component);
+
     }
+
+
+    //将该组件绑定的所有函数，bind到本对象的context
+    componentDefine = bind_function_context(componentDefine);
 
     __REGISTER_COMPONENT_CONTAINER__[componentName] = componentDefine;
     return componentDefine;
@@ -107,7 +164,7 @@ function register_component_by_template(componentName, html2js_tpl) {
                 }
 
                 var params = (propsMap['params'] || "").trim();
-                var params_array = params.split(",");
+                var params_array = removeEmptyElement(params.split(","));
 
 
                 return function (dd) {
