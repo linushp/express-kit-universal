@@ -224,6 +224,8 @@ function get_component(componentName) {
 function extend_component(componentObject, xxxObj) {
     if (isObject(componentObject)) {
         extend_object(componentObject, xxxObj);
+
+        bind_function_context(componentObject);
     }
     else if (isString(componentObject)) {
         var compObj = get_component(componentObject);
@@ -232,6 +234,7 @@ function extend_component(componentObject, xxxObj) {
             throw new Error("cannot find component of :" + componentObject);
         }
         extend_object(compObj, xxxObj);
+        bind_function_context(compObj);
     }
 }
 
